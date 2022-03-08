@@ -26,6 +26,23 @@ function hasLongitude(req, res, next) {
   next({ status: 400, message: "longitude must be between -180 and 180" });
 }
 
+function hasAirTemperature(req, res, next) {
+  const airTemperature = Number(req.body.data.air_temperature);
+  if (airTemperature >= -50 && airTemperature <= 107) {
+    return next();
+  }
+  next({ status: 400, message: "air temperature must be between -50 and 107" });
+}
+function hasAirTemperatureUnit(req, res, next) {
+  const airTemperatureUnit = req.body.data.air_temperature_unit;
+  if (airTemperatureUnit === 'C' || airTemperatureUnit === 'F') {
+    return next();
+  }
+  next({ status: 400, message: "air temperature unit must be 'C' for Celcius or 'F' for Farenheit" });
+}
+
+
+
 function hasSkyCondition(req, res, next) {
   const skyCondition = Number(req.body.data.sky_condition);
 
@@ -82,6 +99,8 @@ module.exports = {
     hasData,
     hasLatitude,
     hasLongitude,
+    hasAirTemperature,
+    hasAirTemperatureUnit,
     hasSkyCondition,
     asyncErrorBoundary(create),
   ],
@@ -90,6 +109,8 @@ module.exports = {
     hasData,
     hasLatitude,
     hasLongitude,
+    hasAirTemperature,
+    hasAirTemperatureUnit,
     hasSkyCondition,
     asyncErrorBoundary(update),
   ],
