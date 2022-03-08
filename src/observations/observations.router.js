@@ -6,7 +6,6 @@ router
   .route("/")
   .post(controller.create)
   .get(controller.list)
-  .delete(controller.delete)
   .all(methodNotAllowed);
 
 router
