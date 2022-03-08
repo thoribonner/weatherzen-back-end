@@ -38,6 +38,17 @@ function hasSkyCondition(req, res, next) {
   });
 }
 
+async function observationExists(req, res, nxt) {
+  const observation = await service.read(req.params.observationId);
+
+
+  if (observation) {
+    res.locals.observation = observation;
+    return nxt();
+  }
+  nxt({ status: 404, message: "Observation cannot be found" });
+}
+
 async function create(req, res) {
   const newObservation = await service.create(req.body.data);
 
@@ -46,10 +57,24 @@ async function create(req, res) {
   });
 }
 
+async function update(req, res) {
+  const updatedObservation = {
+    ...req.body.data,
+    observation_id: res.locals.observation.observation_id,
+  };
+  
+  const data = await service.update(updatedObservation);
+  res.json({ data });
+}
+
 async function list(req, res) {
   res.json({
     data: await service.list(),
   });
+}
+
+async function read(req, res) {
+  res.json({ data: res.locals.observation });
 }
 
 module.exports = {
@@ -60,5 +85,14 @@ module.exports = {
     hasSkyCondition,
     asyncErrorBoundary(create),
   ],
+  update: [
+    asyncErrorBoundary(observationExists),
+    hasData,
+    hasLatitude,
+    hasLongitude,
+    hasSkyCondition,
+    asyncErrorBoundary(update),
+  ],
   list,
+  read: [asyncErrorBoundary(observationExists), read],
 };
