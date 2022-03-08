@@ -19,8 +19,13 @@ function update(updatedObservation) {
     .update(updatedObservation, "*");
 }
 
+function destroy(observation_id) {
+  return knex('observations').where({observation_id}).del();
+}
+
 module.exports = {
   create,
+  delete: destroy,
   list,
   read,
   update,

@@ -94,6 +94,11 @@ async function read(req, res) {
   res.json({ data: res.locals.observation });
 }
 
+async function destroy(req, res) {
+  await service.delete(res.locals.observation.observation_id);
+  res.sendStatus(204);
+}
+
 module.exports = {
   create: [
     hasData,
@@ -116,4 +121,5 @@ module.exports = {
   ],
   list,
   read: [asyncErrorBoundary(observationExists), read],
+  delete: [asyncErrorBoundary(observationExists), asyncErrorBoundary(destroy)]
 };
